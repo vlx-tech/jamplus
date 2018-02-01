@@ -392,7 +392,7 @@ require 'ide/codeblocks'
 require 'ide/xcode'
 
 if uname == 'windows' then
-	DefaultExporter = 'vs2015'
+	DefaultExporter = 'vs2017'
 elseif uname == 'darwin' then
 	DefaultExporter = 'xcode'
 else
