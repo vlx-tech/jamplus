@@ -3,6 +3,7 @@ rule C.Toolchain.mingw.win32-release {
 	C.Flags * : C++	: -g -O2 ;
 	C.Flags * : M	: -g -O2 ;
 	C.Flags * : MM	: -g -O2 ;
+    C.LinkFlags * : -static ;
 
 	C.Toolchain.Helper.ReleaseSettings ;
 }

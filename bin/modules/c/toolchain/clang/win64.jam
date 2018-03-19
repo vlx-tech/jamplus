@@ -1,0 +1,32 @@
+rule C.Toolchain.clang.win64.Detect {
+    local foundPath = [ Glob
+        $(ProgramFiles:J=$(SPACE))/LLVM/bin
+        $(PATH)
+        : clang.exe ] ;
+    if ! $(foundPath) {
+        return ;
+    }
+
+    foundPath = [ Match (.+)/ : $(foundPath[1]) ] ;
+    if ! [ C.Toolchain.clang.Setup $(foundPath) ] {
+        return ;
+    }
+
+    C.AR on $(C.COMPILER_SUITE_SYMBOL) = @(llvm-ar:R=$(foundPath)) ru ;
+    if $(NT) {
+        C.LINK on $(C.COMPILER_SUITE_SYMBOL) = @(lld-link:R=$(foundPath)) ;
+    } else {
+        C.LINK on $(C.COMPILER_SUITE_SYMBOL) = @(lld:R=$(foundPath)) ;
+    }
+
+    if $(NT) {
+        C.LinkFlags * : 
+        /libpath:\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Tools\\MSVC\\14.12.25827\\lib\\x64\" 
+        /libpath:\"C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.15063.0\\um\\x64\" 
+        /libpath:\"C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.15063.0\\ucrt\\x64\" 
+        ;
+    }
+
+    return $(C.COMPILER) ;
+}
+

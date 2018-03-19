@@ -3,6 +3,7 @@ rule C.Toolchain.mingw.win64-debug {
 	C.Flags * : C++	: -g -O0 -m64 ;
 	C.Flags * : M	: -g -O0 -m64 ;
 	C.Flags * : MM	: -g -O0 -m64 ;
+    C.LinkFlags * : -static ;
 
 	C.Toolchain.Helper.DebugSettings ;
 }

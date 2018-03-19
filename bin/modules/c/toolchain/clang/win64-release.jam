@@ -1,0 +1,10 @@
+rule C.Toolchain.clang.win64-release {
+    C.Flags * : CC	: -g -O2 ;
+    C.Flags * : C++	: -g -O2 ;
+    C.Flags * : M	: -g -O2 ;
+    C.Flags * : MM	: -g -O2 ;
+    C.LinkFlags * : libcmt.lib ;
+
+    C.Toolchain.Helper.ReleaseSettings ;
+}
+

@@ -135,9 +135,14 @@ actions C.clang.Archive {
 }
 
 
-
-actions C.clang.Link {
-	$(C.LINK:C) $(LINKFLAGS) -o $(<[1]:C) @^^^($(>:J=$(NEWLINE))) $(NEEDLIBS:TC) $(LINKLIBS:TC)
+if ($NT) {
+    actions C.clang.Link {
+        $(C.LINK:C) $(LINKFLAGS) /out:$(<[1]:C) @^^^($(>:J=$(NEWLINE))) $(NEEDLIBS:TC) $(LINKLIBS:TC)
+    }
+} else {
+    actions C.clang.Link {
+        $(C.LINK:C) $(LINKFLAGS) -o $(<[1]:C) @^^^($(>:J=$(NEWLINE))) $(NEEDLIBS:TC) $(LINKLIBS:TC)
+    }
 }
 
 

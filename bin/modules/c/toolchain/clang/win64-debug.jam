@@ -1,0 +1,9 @@
+rule C.Toolchain.clang.win64-debug {
+    C.Flags * : CC	: -g -O0 ;
+    C.Flags * : C++	: -g -O0 ;
+    C.Flags * : M	: -g -O0 ;
+    C.Flags * : MM	: -g -O0 ;
+    C.LinkFlags * : libcmtd.lib /debug ;
+
+    C.Toolchain.Helper.DebugSettings ;
+}

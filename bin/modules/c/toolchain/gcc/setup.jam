@@ -40,7 +40,7 @@ rule C.Toolchain.gcc.Setup COMPILER_BIN_PATH : SUFFIXES {
     PCHMMFLAGS on $(C.COMPILER_SUITE_SYMBOL) = -x objective-c++-header ;
 
     C.Flags * : CC  : -x c ;
-    C.Flags * : C++ : -x c++ ;
+    C.Flags * : C++ : -x c++ -std=c++14 ;
     C.Flags * : M   : -x objective-c ;
     C.Flags * : MM  : -x objective-c++ ;
 

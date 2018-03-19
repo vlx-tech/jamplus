@@ -3,6 +3,7 @@ rule C.Toolchain.mingw.win64-releaseltcg {
 	C.Flags * : C++	: -g -O3 -m64 ;
 	C.Flags * : M	: -g -O3 -m64 ;
 	C.Flags * : MM	: -g -O3 -m64 ;
+    C.LinkFlags * : -static ;
 
 	C.Toolchain.Helper.ReleaseSettings ;
 }
