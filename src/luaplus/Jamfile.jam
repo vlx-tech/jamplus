@@ -2,6 +2,9 @@ SubDir LUAPLUS ;
 
 #C.Defines * : LUA_WIDESTRING=1 LUA_WIDESTRING_FILE=1 ;
 
+# Jam doesn't build w/ the strict compile settings...
+C.RemoveFlags * : /W4 -Werror ;
+
 Workspace LuaPlus :
 		lua
 		luac

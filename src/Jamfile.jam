@@ -311,6 +311,9 @@ if $(VMS)
 # The guts of the Jamfile: how to build Jam
 #
 
+# Jam doesn't build w/ the strict compile settings...
+C.RemoveFlags * : /W4 -Werror ;
+
 local BIN_PATH = ../bin/$(PLATFORM) ;
 GenFile jam : jambase-j.c : $(mkjambase.exe) Jambase-j ;
 C.LinkLibraries jam : libjam ;
@@ -329,7 +332,7 @@ for file in [ Glob $(OS:L) : *.* : 0 ]
 {
 	CopyFile all : $(BIN_PATH)/$(file) : $(OS:L)/$(file) ;
 }
-
+ 
 if $(LUA_BIN)
 {
 	ActiveTarget "lua" ;
