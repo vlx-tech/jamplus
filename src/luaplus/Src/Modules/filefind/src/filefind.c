@@ -494,11 +494,11 @@ static int filefind_tostring(lua_State *L) {
 	lua_pushstring(L, "[filefind object]: filename = \"");
 	lua_pushstring(L, info->fd.cFileName);
 	lua_pushstring(L, "\"");
-	sprintf(buffer, ", creation_time = %u", fileglob_ConvertToTime_t(&info->fd.ftCreationTime));
+	sprintf(buffer, ", creation_time = %I64d", (unsigned __int64)fileglob_ConvertToTime_t(&info->fd.ftCreationTime));
 	lua_pushstring(L, buffer);
-	sprintf(buffer, ", access_time = %u", fileglob_ConvertToTime_t(&info->fd.ftLastAccessTime));
+	sprintf(buffer, ", access_time = %I64d", (unsigned __int64)fileglob_ConvertToTime_t(&info->fd.ftLastAccessTime));
 	lua_pushstring(L, buffer);
-	sprintf(buffer, ", write_time = %u", fileglob_ConvertToTime_t(&info->fd.ftLastWriteTime));
+	sprintf(buffer, ", write_time = %I64d", (unsigned __int64)fileglob_ConvertToTime_t(&info->fd.ftLastWriteTime));
 	lua_pushstring(L, buffer);
 	sprintf(buffer, ", creation_FILETIME = { %u, %u }", info->fd.ftCreationTime.dwLowDateTime, info->fd.ftCreationTime.dwHighDateTime);
 	lua_pushstring(L, buffer);
@@ -516,7 +516,7 @@ static int filefind_tostring(lua_State *L) {
 	lua_pushstring(L, buffer);
 
 	filefind_index_number_of_links_helper(L, info);
-	sprintf(buffer, ", number_of_links = %d", lua_tointeger(L, -1));
+	sprintf(buffer, ", number_of_links = %d", (int)lua_tointeger(L, -1));
 	lua_pop(L, 1);
 
 	lua_pushstring(L, buffer);
@@ -1008,7 +1008,7 @@ static int l_filefind_FILETIME_to_unix_time_UTC(lua_State* L) {
         ULARGE_INTEGER largeInteger;
 		const char* fileTimeStr = lua_tostring(L, 1);
 
-        if (sscanf( fileTimeStr, "%I64u", &largeInteger) != 1)
+        if (sscanf( fileTimeStr, "%I64u", (unsigned __int64 *)&largeInteger) != 1)
 		{
 			return 0;
 		}

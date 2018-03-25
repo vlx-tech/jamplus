@@ -753,7 +753,7 @@ my_wait( int *status )
 		if ( GetExitCodeProcess(active_handles[i], &exitcode) ) {
 			CloseHandle(active_handles[i]);
 			*status = (int)((exitcode & 0xff) << 8);
-			return (int)active_handles[i];
+			return (int)(__int64)active_handles[i];
 		}
 	}
 #else

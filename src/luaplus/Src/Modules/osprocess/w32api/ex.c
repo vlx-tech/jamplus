@@ -140,7 +140,7 @@ static void new_file(lua_State *L, HANDLE h, int dmode, const char *mode)
   p->f = NULL;
   p->closef = pipe_close;  /* mark file handle as 'closed' */
   luaL_setmetatable(L, LUA_FILEHANDLE);
-  p->f = _fdopen(_open_osfhandle((long)h, dmode), mode);
+  p->f = _fdopen(_open_osfhandle((intptr_t)h, dmode), mode);
 #endif
 }
 

@@ -24,7 +24,7 @@
 # include <stdio.h>
 # include <string.h>
 
-int main( int argc, char **argv, char **envp )
+int main( int argc, char **argv)
 {
 	char buf[ 1024 ];
 	FILE *fin;
@@ -38,15 +38,16 @@ int main( int argc, char **argv, char **envp )
 	    return -1;
 	}
 
-	if( !( fout = fopen( argv[1], "w" ) ) )
+	fout = fopen( argv[1], "w" );
+	if( !fout )
 	{
 	    perror( argv[1] );
 	    return -1;
 	}
 
 	/* If the file ends in .c generate a C source file */
-
-	if( ( p = strrchr( argv[1], '.' ) ) && !strcmp( p, ".c" ) )
+	p = strrchr( argv[1], '.' );
+	if( p && !strcmp( p, ".c" ) )
 	    doDotC++;
 
 	/* Now process the files */
@@ -61,7 +62,8 @@ int main( int argc, char **argv, char **envp )
 
 	for( ; argc--; argv++ )
 	{
-	    if( !( fin = fopen( *argv, "r" ) ) )
+		fin = fopen( *argv, "r" );
+	    if( !fin )
 	    {
 		perror( *argv );
 		return -1;
@@ -80,7 +82,7 @@ int main( int argc, char **argv, char **envp )
 	    {
 		if( doDotC )
 		{
-		    char *p = buf;
+		    p = buf;
 
 		    /* Strip leading whitespace. */
 

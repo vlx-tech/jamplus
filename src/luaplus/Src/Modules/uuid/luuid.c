@@ -68,7 +68,7 @@ static int Lunparse(lua_State *L)		/** unparse(uuidbuffer) */
 {
  char s[2*sizeof(uuid_t)+4+1];
  size_t len;
- uuid_t *c=luaL_checklstring(L,1,&len);
+ uuid_t *c=(uuid_t *)luaL_checklstring(L,1,&len);
  if (len != 16)
    return 0;
  uuid_unparse(*c,s);

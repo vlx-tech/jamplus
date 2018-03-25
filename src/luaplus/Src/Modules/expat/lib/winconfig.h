@@ -25,6 +25,8 @@
 #define BYTEORDER 1234
 
 /* Windows has memmove() available. */
+#ifndef HAVE_MEMMOVE
 #define HAVE_MEMMOVE
+#endif
 
 #endif /* ndef WINCONFIG_H */

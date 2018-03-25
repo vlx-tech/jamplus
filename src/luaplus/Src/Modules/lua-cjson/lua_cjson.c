@@ -57,7 +57,7 @@
 /* Workaround for Solaris platforms missing isinf() */
 #if _MSC_VER
 #include <float.h>
-#define isnan _isnan
+//#define isnan _isnan
 #define MISSING_ISINF
 #endif
 

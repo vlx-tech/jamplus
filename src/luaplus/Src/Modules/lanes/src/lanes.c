@@ -417,7 +417,7 @@ struct s_Linda
 	unsigned long group; // a group to control keeper allocation between lindas
 	char name[1];
 };
-#define LINDA_KEEPER_HASHSEED( linda) (linda->group ? linda->group : (unsigned long)linda)
+#define LINDA_KEEPER_HASHSEED( linda) (linda->group ? linda->group : (unsigned long)(intptr_t)linda)
 
 static void* linda_id( lua_State*, enum eDeepOp);
 
