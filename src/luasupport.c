@@ -862,7 +862,7 @@ typedef void* LuaTildeHost;
 LuaTildeHost* (*LuaTilde_Command)(LuaTildeHost*, const char*, void*, void*);
 
 
-void ls_lua_init()
+bool ls_lua_init()
 {
     char fileName[4096];
     LIST *luaSharedLibrary;
@@ -873,7 +873,7 @@ void ls_lua_init()
 #endif
 
     if (L)
-        return;
+        return true;
 
 #ifdef _DEBUG
     luaSharedLibrary = var_get("LUA_SHARED_LIBRARY.DEBUG");
@@ -906,7 +906,7 @@ void ls_lua_init()
         if (!handle)
         {
             printf("jam: Unable to find the LuaPlus shared library.\n");
-            exit(EXITBAD);
+            return false;
         }
     }
 
@@ -1008,6 +1008,8 @@ void ls_lua_init()
         lol_free(&lol);
         list_free(result);
     }
+
+    return true;
 }
 
 
@@ -1019,7 +1021,8 @@ int luahelper_taskadd(const char* taskscript, LOL* args)
     char* newTaskScript;
 	int i;
 
-    ls_lua_init();
+    if (!ls_lua_init())
+        return -1;
 
     ls_lua_getglobal(L, "lanes");                             /* lanes */
     ls_lua_getfield(L, -1, "gen");                            /* lanes gen */
@@ -1086,7 +1089,8 @@ int luahelper_taskadd(const char* taskscript, LOL* args)
 int luahelper_taskisrunning(intptr_t taskid, int* returnValue)
 {
     const char* status;
-    ls_lua_init();
+    if (!ls_lua_init())
+        return 0;
 
     ls_lua_rawgeti(L, LUA_REGISTRYINDEX, taskid);        /* lane_h */
     if (!ls_lua_isuserdata(L, -1))
@@ -1158,7 +1162,8 @@ void luahelper_taskcancel(intptr_t taskid)
 {
     int ret;
 
-    ls_lua_init();
+    if (!ls_lua_init())
+        return;
 
     ls_lua_rawgeti(L, LUA_REGISTRYINDEX, taskid);
     ls_lua_pushvalue(L, -1);
@@ -1183,7 +1188,8 @@ void luahelper_taskcancel(intptr_t taskid)
 static int linefilter_stack_position = -1;
 
 int luahelper_push_linefilter(const char* actionName) {
-    ls_lua_init();
+    if (!ls_lua_init())
+        return 0;
 
     ls_lua_getglobal(L, "LineFilters");                        /* LineFilters */
     ls_lua_getfield(L, -1, actionName);                        /* LineFilters function */
@@ -1216,7 +1222,8 @@ const char* luahelper_linefilter(const char* line, size_t lineSize) {
         exit(1);
     }
 
-    ls_lua_init();
+    if (!ls_lua_init())
+        return NULL;
 
     top = ls_lua_gettop(L);
     ls_lua_pushvalue(L, linefilter_stack_position);
@@ -1244,7 +1251,8 @@ int luahelper_md5callback(const char *filename, MD5SUM sum, const char* callback
 {
     int ret;
 
-    ls_lua_init();
+    if (!ls_lua_init())
+        return 0;
 
     ls_lua_getglobal(L, callback);
     if (!ls_lua_isfunction(L, -1))
@@ -1304,7 +1312,8 @@ builtin_luastring(
         printf("jam: No argument passed to LuaString\n");
         exit(EXITBAD);
     }
-    ls_lua_init();
+    if (!ls_lua_init())
+        return NULL;
     top = ls_lua_gettop(L);
     ret = ls_luaL_loadstring(L, list_value(list_first(l)));
     return ls_lua_callhelper(top, ret);
@@ -1327,7 +1336,8 @@ builtin_luafile(
         printf("jam: No argument passed to LuaFile\n");
         exit(EXITBAD);
     }
-    ls_lua_init();
+    if (!ls_lua_init())
+        return NULL;
     top = ls_lua_gettop(L);
     ls_lua_newtable(L);
     for (l2 = list_first(lol_get(args, 1)); l2; l2 = list_next(l2)) {
