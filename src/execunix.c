@@ -535,7 +535,7 @@ execcmd(
 			dup( fd );
 		}
 # endif
-		execvp( argv[0], argv );
+		execvp( argv[0], (char * const *)argv );
 		exit(127);
 	}
 # endif

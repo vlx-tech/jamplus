@@ -9,6 +9,10 @@
 #include <unistd.h>
 #endif
 
+#if defined(OS_MACOSX)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 static int do_newtmp(char** name, const char* ext)
 {
     int h = 0;

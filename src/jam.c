@@ -156,6 +156,7 @@
 
 # ifdef OS_MACOSX
 # include <CoreServices/CoreServices.h>
+# include <sys/sysctl.h>
 # endif
 
 /* And UNIX for this */
@@ -511,7 +512,20 @@ int main( int argc, char **argv, char **arg_environ )
 		globs.jobs = 1;
 }
 #elif defined(OS_MACOSX)
-	globs.jobs = MPProcessors();
+	{
+		int count;
+		size_t size=sizeof(count);
+
+		if (sysctlbyname("hw.ncpu",&count,&size,NULL,0))
+		{
+			globs.jobs = count;
+			printf("**** %d\n",globs.jobs);
+		}
+		else
+		{
+			globs.jobs = 1;
+		}
+	}
 #endif
 
 #endif /* OPT_IMPROVE_JOBS_SETTING_EXT */
