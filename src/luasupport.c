@@ -862,7 +862,7 @@ typedef void* LuaTildeHost;
 LuaTildeHost* (*LuaTilde_Command)(LuaTildeHost*, const char*, void*, void*);
 
 
-bool ls_lua_init()
+int ls_lua_init()
 {
     char fileName[4096];
     LIST *luaSharedLibrary;
@@ -873,7 +873,7 @@ bool ls_lua_init()
 #endif
 
     if (L)
-        return true;
+        return 1;
 
 #ifdef _DEBUG
     luaSharedLibrary = var_get("LUA_SHARED_LIBRARY.DEBUG");
@@ -906,7 +906,7 @@ bool ls_lua_init()
         if (!handle)
         {
             printf("jam: Unable to find the LuaPlus shared library.\n");
-            return false;
+            return 0;
         }
     }
 
@@ -1009,7 +1009,7 @@ bool ls_lua_init()
         list_free(result);
     }
 
-    return true;
+    return 1;
 }
 
 
