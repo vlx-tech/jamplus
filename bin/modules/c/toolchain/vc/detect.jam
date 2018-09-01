@@ -223,5 +223,16 @@ rule C.Toolchain.vc.Detect THE_COMPILER : OPTIONS {
     return $(C.COMPILER) ;
 }
 
+rule C.Toolchain.vc.DetectMSSDK {
+    local key = HKEY_LOCAL_MACHINE SOFTWARE Microsoft "Windows Kits" "Installed Roots" ;
+    local key2 = "Installed Options" OptionId.AvrfExternal ;
 
+    # @@@ would be better if we could scan registry keys... 
+    for ver in 17134 16299 15063 {
+        if [ W32_GETREG $(key) 10.0.$(ver).0 $(key2) ] {
+            return 10.0.$(ver).0 ;
+        }
+    }
 
+    return "---" ;
+}

@@ -15,23 +15,22 @@ rule C.Toolchain.vc.win64.Detect COMPILER {
     switch $(COMPILER) {
         case vs2017 :
             local key = HKEY_LOCAL_MACHINE SOFTWARE Microsoft "Windows Kits" "Installed Roots" KitsRoot10 ;
-            MSSDK10 = [ W32_GETREG $(key) ] ;
-            key = HKEY_LOCAL_MACHINE SOFTWARE Microsoft "Windows Kits" "Installed Roots" KitsRoot10 ;
             MSSDK = [ W32_GETREG $(key) ] ;
             MSSDK ?= $(MSVCNT) ;
+            local MSSDK_VER = [ C.Toolchain.vc.DetectMSSDK ] ;
             MSSDK_BINDIR = "$(MSSDK)/bin/x64" ;
             MSSDK_STDHDRS =
                 $(MSVCNT)/include
                 $(MSVCNT)/../../../Auxiliary/VS/include
-                $(MSSDK)/Include/10.0.16299.0/ucrt
-                $(MSSDK)/Include/10.0.16299.0/um
-                $(MSSDK)/Include/10.0.16299.0/shared
-                $(MSSDK)/Include/10.0.16299.0/winrt
+                $(MSSDK)/Include/$(MSSDK_VER)/ucrt
+                $(MSSDK)/Include/$(MSSDK_VER)/um
+                $(MSSDK)/Include/$(MSSDK_VER)/shared
+                $(MSSDK)/Include/$(MSSDK_VER)/winrt
             ;
             MSSDK_LINKDIRECTORIES =
                 $(MSVCNT)/lib/x64
-                $(MSSDK)/lib/10.0.16299.0/ucrt/x64
-                $(MSSDK)/lib/10.0.16299.0/um/x64
+                $(MSSDK)/lib/$(MSSDK_VER)/ucrt/x64
+                $(MSSDK)/lib/$(MSSDK_VER)/um/x64
             ;
             MSVCBIN = "$(MSVCNT)/bin/HostX64/x64/" ;
             RC = $(MSSDK)/bin/x64/rc ;
