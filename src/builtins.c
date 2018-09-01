@@ -100,6 +100,7 @@ static LIST* builtin_math( PARSE *parse, LOL *args, int *jmp );
 #ifdef NT
 #ifdef OPT_BUILTIN_W32_GETREG_EXT
 static LIST* builtin_w32_getreg( PARSE *parse, LOL *args, int *jmp );
+static LIST* builtin_w32_getregkeys( PARSE *parse, LOL *args, int *jmp );
 #endif
 
 #ifdef OPT_BUILTIN_W32_GETREG64_EXT
@@ -220,6 +221,8 @@ load_builtins()
 #ifdef OPT_BUILTIN_W32_GETREG_EXT
 	bindrule( "W32_GETREG" )->procedure =
 		parse_make( builtin_w32_getreg, P0, P0, P0, C0, C0, 0 );
+	bindrule( "W32_GETREGKEYS" )->procedure =
+		parse_make( builtin_w32_getregkeys, P0, P0, P0, C0, C0, 0 );
 #endif
 #ifdef OPT_BUILTIN_W32_GETREG64_EXT
 	bindrule( "W32_GETREG64" )->procedure =
@@ -1040,6 +1043,18 @@ builtin_w32_getreg( PARSE *parse, LOL *args, int *jmp )
 	if (result)
 		return list_append(L0, result, 0);
 	return L0;
+}
+
+/*
+* builtin_w32_getregkeys() - W32_GETREGKEYS rule, returns a list of sub-keys
+* 			given a list of keys.
+*
+* Usage: result = [ W32_GETREGKEYS list ] ;
+*/
+static LIST*
+builtin_w32_getregkeys( PARSE *parse, LOL *args, int *jmp )
+{
+	return w32_getregkeys(lol_get(args, 0));
 }
 
 #ifdef OPT_BUILTIN_W32_GETREG64_EXT

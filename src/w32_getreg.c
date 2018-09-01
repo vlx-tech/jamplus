@@ -37,18 +37,18 @@ w32_getreg_internal(LIST* pathlist, INT is64Bit)
     DWORD dataType  = 0;
     DWORD dataSize  = 0;
     char* dataValue = 0;
-	const char* retval = 0;
-	LISTITEM* curEl = list_first(pathlist);
-	    
+    const char* retval = 0;
+    LISTITEM* curEl = list_first(pathlist);
+        
     if (!curEl) return 0;
 
     while (keydefs->keyname) {
-	if (!strcmp(list_value(curEl), keydefs->keyname)) {
-	    key = keydefs->keyval;
-	    curEl = list_next(curEl);
-	    break;
-	}
-	++keydefs;
+        if (!strcmp(list_value(curEl), keydefs->keyname)) {
+            key = keydefs->keyval;
+            curEl = list_next(curEl);
+            break;
+        }
+        ++keydefs;
     }
 
     if (!keydefs->keyname) return 0;
@@ -59,17 +59,17 @@ w32_getreg_internal(LIST* pathlist, INT is64Bit)
             DWORD retCode = RegOpenKeyEx(key, valueName, 0,
                                          KEY_EXECUTE |
                                          KEY_QUERY_VALUE |
-										 ( is64Bit ? KEY_WOW64_64KEY : 0 ) |
+                                         ( is64Bit ? KEY_WOW64_64KEY : 0 ) |
                                          KEY_ENUMERATE_SUB_KEYS, &key);
             if (retCode != ERROR_SUCCESS) {
-		return 0;
-	    }
+                return 0;
+            }
         }
         valueName = text;
     }
 
     if (!valueName) {
-	return 0;
+        return 0;
     }
     
     {
@@ -81,30 +81,30 @@ w32_getreg_internal(LIST* pathlist, INT is64Bit)
                                         &dataSize);
 
         if (retCode != ERROR_SUCCESS) {
-	    return 0;
-	}
+            return 0;
+        }
 
         switch (dataType) {
-	case REG_SZ:
-	case REG_EXPAND_SZ:
-	case REG_DWORD:
-	    break;
-	default:
-	    return 0;
+        case REG_SZ:
+        case REG_EXPAND_SZ:
+        case REG_DWORD:
+            break;
+        default:
+            return 0;
         }
 
         if (dataSize < 1) {
-	    return 0;
-	}
+            return 0;
+        }
 
-		if ( dataType == REG_DWORD )
-		{
-			dataSize = sizeof( DWORD );
-		}
-		else
-		{
-			dataSize += 5;
-		}
+        if ( dataType == REG_DWORD )
+        {
+            dataSize = sizeof( DWORD );
+        }
+        else
+        {
+            dataSize += 5;
+        }
         dataValue = malloc(dataSize);
 
         retCode = RegQueryValueEx(key,
@@ -115,38 +115,98 @@ w32_getreg_internal(LIST* pathlist, INT is64Bit)
                                   &dataSize);
 
         if (retCode != ERROR_SUCCESS) {
-	    free(dataValue);
+            free(dataValue);
             return 0;
         }
 
-	if ( dataType == REG_DWORD )
-	{
-		char buffer[ 128 ];
-		itoa( ( ( DWORD *)dataValue )[ 0 ], buffer, 10 );
-		retval = newstr( buffer );
-	}
-	else
-	{
-		retval = newstr(dataValue);
-	}
-	free(dataValue);
-	return retval;
+        if ( dataType == REG_DWORD )
+        {
+            char buffer[ 128 ];
+            itoa( ( ( DWORD *)dataValue )[ 0 ], buffer, 10 );
+            retval = newstr( buffer );
+        }
+        else
+        {
+            retval = newstr(dataValue);
+        }
+        free(dataValue);
+        return retval;
     }
 }
 
 const char*
 w32_getreg(LIST* pathlist)
 {
-	const char* ret = w32_getreg_internal( pathlist, 0); 
-	if (ret == 0) ret = w32_getreg_internal( pathlist, 1);
-	return ret;
+    const char* ret = w32_getreg_internal( pathlist, 0); 
+    if (ret == 0) ret = w32_getreg_internal( pathlist, 1);
+    return ret;
+}
+
+LIST*
+w32_getregkeys_internal(LIST* pathlist, INT is64Bit)
+{
+    HKEY key = HKEY_LOCAL_MACHINE;
+    struct keydef *keydefs = keynames;
+    LIST* retval = L0;
+    DWORD retCode;
+    DWORD n,i;
+    char value[1024];
+    LISTITEM* curEl = list_first(pathlist);
+        
+    if (!curEl) return L0;
+
+    while (keydefs->keyname) {
+        if (!strcmp(list_value(curEl), keydefs->keyname)) {
+            key = keydefs->keyval;
+            curEl = list_next(curEl);
+            break;
+        }
+        ++keydefs;
+    }
+
+    if (!keydefs->keyname) return L0;
+
+    for ( ; curEl ; curEl = list_next(curEl)) {
+        const char* text = list_value(curEl);
+        retCode = RegOpenKeyEx(key, text, 0,
+                                        KEY_EXECUTE |
+                                        KEY_QUERY_VALUE |
+                                        ( is64Bit ? KEY_WOW64_64KEY : 0 ) |
+                                        KEY_ENUMERATE_SUB_KEYS, &key);
+        if (retCode != ERROR_SUCCESS) {
+            return L0;
+        }
+    }
+
+    retCode = RegQueryInfoKey(key,NULL,NULL,NULL,&n,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+    if (retCode != ERROR_SUCCESS) {
+        return L0;
+    }
+
+    for (i=0;i<n;++i) {
+        DWORD size=sizeof(value);
+        if (RegEnumKeyEx(key,i,value,&size,NULL,NULL,NULL,NULL)==ERROR_SUCCESS) {
+            retval=list_append(retval,value,0);
+        }
+    }
+
+    RegCloseKey(key);
+    return retval;
+}
+
+LIST* 
+w32_getregkeys(LIST* pathlist)
+{
+    LIST* ret = w32_getregkeys_internal( pathlist, 0);
+    if (ret == L0) ret = w32_getregkeys_internal( pathlist, 1);
+    return ret;    
 }
 
 #ifdef OPT_BUILTIN_W32_GETREG64_EXT
 const char*
 w32_getreg64(LIST* pathlist)
 {
-	return w32_getreg_internal( pathlist, 1 );
+    return w32_getreg_internal( pathlist, 1 );
 }
 #endif
 
