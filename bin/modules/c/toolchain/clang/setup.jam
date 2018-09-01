@@ -48,7 +48,7 @@ rule C.Toolchain.clang.Setup COMPILER_BIN_PATH : SUFFIXES {
         C.LinkFlags * : libucrt.lib libvcruntime.lib oldnames.lib ;
     }
 
-    C.AR on $(C.COMPILER_SUITE_SYMBOL) = @(libtool:R=$(COMPILER_BIN_PATH)) ;
+    C.AR on $(C.COMPILER_SUITE_SYMBOL) = @(ar:R=$(COMPILER_BIN_PATH)) rU ;
     C.CC on $(C.COMPILER_SUITE_SYMBOL) = @(clang:R=$(COMPILER_BIN_PATH)) ;
     C.C++ on $(C.COMPILER_SUITE_SYMBOL) = @(clang++:R=$(COMPILER_BIN_PATH)) ;
     C.LINK on $(C.COMPILER_SUITE_SYMBOL) = @(clang++:R=$(COMPILER_BIN_PATH)) ;

@@ -468,10 +468,24 @@ else
 	elseif uname == 'linux' then
 		Platform = 'linux'
 		PlatformDir = 'linux32'
-		COMPILER = 'gcc'
-		C_CC = 'C.gcc.CC'
-		C_ARCHIVE = 'C.gcc.Archive'
-		C_LINK = 'C.gcc.Link'
+		if Compiler == 'clang' then
+			COMPILER = 'clang'
+			C_CC = 'C.clang.CC'
+			C_ARCHIVE = 'C.clang.Archive'
+			C_LINK = 'C.clang.Link'
+		else
+			COMPILER = 'gcc'
+			C_CC = 'C.gcc.CC'
+			C_ARCHIVE = 'C.gcc.Archive'
+			C_LINK = 'C.gcc.Link'
+		end
+	elseif uname == 'freebsd' then
+		Platform = 'linux'
+		PlatformDir = 'linux32'
+		COMPILER = 'clang'
+		C_CC = 'C.clang.CC'
+		C_ARCHIVE = 'C.clang.Archive'
+		C_LINK = 'C.clang.Link'
 	end
 
 	SUFEXE = ''
@@ -498,6 +512,20 @@ if arg[1] == '--compiler' then
 	Compiler = arg[2]
 	table.remove(arg, 1)
 	table.remove(arg, 1)
+end
+
+if Platform == 'linux' then
+	if Compiler == 'clang' then
+		COMPILER = 'clang'
+		C_CC = 'C.clang.CC'
+		C_ARCHIVE = 'C.clang.Archive'
+		C_LINK = 'C.clang.Link'
+	else
+		COMPILER = 'gcc'
+		C_CC = 'C.gcc.CC'
+		C_ARCHIVE = 'C.gcc.Archive'
+		C_LINK = 'C.gcc.Link'
+	end
 end
 
 if arg[1] then
